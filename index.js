@@ -11,7 +11,18 @@ const clients = new Set();
 
 wss.on('connection', (ws) => {
   clients.add(ws);
-  ws.on('close', () => { clients.delete(ws); });
+
+  ws.on('close', () => clients.delete(ws));
+
+  ws.on('message', (message) => {
+      try {
+          const parsedData = JSON.parse(message);
+          currentData = { ...currentData, ...parsedData };
+          console.log('Updated currentData:', currentData);
+      } catch (error) {
+          console.error('Error parsing JSON:', error);
+      }
+  });
 });
 
 // HTTP GET endpoint
@@ -34,8 +45,33 @@ app.get('/sendData', (req, res) => {
     }
   });
 
-  res.send('Notification sent to all clients');
+  res.send('Notification sent  to all clients');
 });
+
+
+let currentData = {
+  image: null,
+  description: null,
+  title: null,
+}
+
+// HTTP GET endpoint
+app.get('/receiveData', (req, res) => {
+
+  if (!currentData.image || !currentData.description || !currentData.title) {
+    res.status(200);
+    res.send("no data");
+    return;
+  }
+
+  let resultString = `${currentData.image.toString()}, ${currentData.description}, ${currentData.title}`;
+
+  res.send(resultString);
+});
+
+
+
+
 
 // Start the server
 server.listen(8005, () => {
