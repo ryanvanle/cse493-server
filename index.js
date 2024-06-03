@@ -53,6 +53,7 @@ app.get('/sendData', (req, res) => {
     }
   });
 
+  console.log(currentData);
 
   if (currentData.currentTimeMs == null || currentData.healthColor == null || currentData.isVibe == null) {
     res.send("no data");
@@ -60,8 +61,10 @@ app.get('/sendData', (req, res) => {
   }
 
 
-  let resultString = `${currentData.currentTimeMs}, ${currentData.healthColor}, ${currentData.isVibe}`;
+  let resultString = `${currentData.currentTimeMs}|${currentData.healthColor}|${currentData.isVibe}`;
+
   res.send(resultString);
+
 });
 
 
