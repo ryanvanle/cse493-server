@@ -9,6 +9,13 @@ const wss = new WebSocket.Server({ server });
 
 const clients = new Set();
 
+
+let currentData = {
+  currentTimeMs: null,
+  healthColor: null,
+  isVibe: null,
+}
+
 wss.on('connection', (ws) => {
   clients.add(ws);
 
@@ -38,6 +45,7 @@ app.get('/sendData', (req, res) => {
 
   const dataString = `${x},${y},${z},${isPressed}`;
 
+  console.log("called");
 
   clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
@@ -45,33 +53,39 @@ app.get('/sendData', (req, res) => {
     }
   });
 
-  res.send('Notification sent  to all clients');
-});
 
-
-let currentData = {
-  image: null,
-  description: null,
-  title: null,
-}
-
-// HTTP GET endpoint
-app.get('/receiveData', (req, res) => {
-
-  if (!currentData.image || !currentData.description || !currentData.title) {
-    res.status(200);
+  if (currentData.currentTimeMs == null || currentData.healthColor == null || currentData.isVibe == null) {
     res.send("no data");
     return;
   }
 
-  let resultString = `${currentData.image.toString()}, ${currentData.description}, ${currentData.title}`;
 
+  let resultString = `${currentData.currentTimeMs}, ${currentData.healthColor}, ${currentData.isVibe}`;
   res.send(resultString);
 });
 
 
 
+// // HTTP GET endpoint
+// app.get('/receiveData', (req, res) => {
 
+// });
+
+
+// ws.onopen = () => {
+//   console.log("Connected to the server");
+
+//   const sampleImageData = "base64EncodedImageData";
+//   const sampleDescription = "description";
+//   const sampleTitle = "hi! :D";
+
+//   sendDataToServer(sampleImageData, sampleDescription, sampleTitle);
+// };
+
+// function sendDataToServer(imageData, description, title) {
+//   const dataToSend = JSON.stringify({ image: imageData, description, title });
+//   ws.send(dataToSend);
+// }
 
 // Start the server
 server.listen(8005, () => {
