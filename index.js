@@ -45,7 +45,7 @@ app.get('/sendData', (req, res) => {
 
   const dataString = `${x},${y},${z},${isPressed}`;
 
-  console.log("called");
+  // console.log("called");
 
   clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
